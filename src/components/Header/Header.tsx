@@ -4,31 +4,43 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { RoutePath } from "routes/routerConfig";
+import useAuthStatus from "common/hooks/useAuthStatus";
+import { useDispatch } from "react-redux";
+import { authActions } from "store/auth/authSlice";
+import { useCallback } from "react";
 
 export default function Header() {
+    const { isLoggedIn } = useAuthStatus();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const onLogout = useCallback(() => {
+        dispatch(authActions.logout());
+        navigate(RoutePath.auth);
+    }, [dispatch, navigate]);
+
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position='static'>
                 <Toolbar>
-                    <IconButton
-                        size='large'
-                        edge='start'
-                        color='inherit'
-                        aria-label='menu'
-                        sx={{ mr: 2 }}
-                    >
-                        <MenuIcon />
-                    </IconButton>
                     <Typography
                         variant='h6'
                         component='div'
                         sx={{ flexGrow: 1 }}
                     >
-                        News
+                        <Link to={RoutePath.main}>News</Link>
                     </Typography>
-                    <Button color='inherit'>Login</Button>
+                    {!isLoggedIn ? (
+                        <NavLink to={RoutePath.auth}>
+                            <Button color='secondary'>Login</Button>
+                        </NavLink>
+                    ) : (
+                        <Button color='secondary' onClick={onLogout}>
+                            Log out
+                        </Button>
+                    )}
                 </Toolbar>
             </AppBar>
         </Box>

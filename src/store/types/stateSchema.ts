@@ -7,9 +7,11 @@ import {
 import { type AxiosInstance } from "axios";
 import { type NavigateOptions, type To } from "react-router-dom";
 import { FeedSchema } from "../slices/types";
+import { AuthSchema } from "store/auth/types";
 
 export interface StateSchema {
     feed: FeedSchema;
+    auth: AuthSchema;
 
     // async reducer
 }
