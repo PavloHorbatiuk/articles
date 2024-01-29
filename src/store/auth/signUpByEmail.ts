@@ -30,14 +30,13 @@ export const signUpByEmail = createAsyncThunk<
         dispatch(authActions.setAuthData(response.data));
 
         return response.data;
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         if (axios.isAxiosError(error)) {
             dispatch(authActions.setError(error.response?.data.message));
         }
         console.error(error);
 
-        return rejectWithValue(error.response.data.message as string);
+        return rejectWithValue(error.response.data.message);
     }
 });

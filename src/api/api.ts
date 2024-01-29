@@ -23,4 +23,5 @@ export const $api = axios.create({
 export enum URL {
     LOGIN = "auth/login",
     REGISTRATION = "auth/register",
+    GET_ALL_ARTICLES = "articles",
 }

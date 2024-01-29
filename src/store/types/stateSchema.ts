@@ -6,11 +6,11 @@ import {
 } from "@reduxjs/toolkit";
 import { type AxiosInstance } from "axios";
 import { type NavigateOptions, type To } from "react-router-dom";
-import { FeedSchema } from "../slices/types";
+import { ArticleSchema } from "../slices/types";
 import { AuthSchema } from "store/auth/types";
 
 export interface StateSchema {
-    feed: FeedSchema;
+    article: ArticleSchema;
     auth: AuthSchema;
 
     // async reducer

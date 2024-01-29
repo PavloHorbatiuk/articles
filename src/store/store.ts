@@ -8,7 +8,7 @@ import {
 import { $api } from "../api/api";
 import { type NavigateOptions, type To } from "react-router-dom";
 
-import { feedReducer } from "./slices/feedSlice";
+import { articleReducer } from "./slices/articles/articleSlice";
 import { createReducerManager } from "./reducerManager";
 import { StateSchema, ThunkExtraArg } from "./types/stateSchema";
 import { authReducer } from "./auth/authSlice";
@@ -21,7 +21,7 @@ export function createReduxStore(
     const rootReducers: ReducersMapObject<StateSchema> = {
         ...asyncReducers,
         auth: authReducer,
-        feed: feedReducer,
+        article: articleReducer,
     };
     const reducerManager = createReducerManager(rootReducers);
 

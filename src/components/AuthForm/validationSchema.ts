@@ -7,7 +7,7 @@ const errorMessages = {
     },
     password: {
         required: "Password is required",
-        weak: "Password must be atleast 6 characters",
+        weak: "Password must be at least 6 characters",
     },
     name: {
         required: "Name is required",
