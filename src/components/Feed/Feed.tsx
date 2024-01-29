@@ -10,15 +10,17 @@ import styled from "@emotion/styled";
 
 const Feed = () => {
     const dispatch = useDispatch<AppThunkDispatch>();
-    const feed = useSelector(getArticles);
+    const { data, totalCount } = useSelector(getArticles);
     const [page, setPage] = useState(1);
 
     const handlePageChange = (event: ChangeEvent<unknown>, newPage: number) => {
         setPage(newPage);
     };
 
-    console.log(feed, "feed");
-
+    // const sortedFeed = [...data].sort(
+    //     (a, b) => new Date(b.pubDate).valueOf() - new Date(a.pubDate).valueOf()
+    // );
+    // console.log(data, "data");
     useEffect(() => {
         const fetchArticles = async () => {
             const params = { page: page, limit: 10 };
@@ -29,14 +31,14 @@ const Feed = () => {
 
     return (
         <div>
-            {feed.data.map((article: Article, index) => (
+            {data.map((article: Article, index) => (
                 <ArticleItem key={index} data={article} />
             ))}
             <StackDiv spacing={2}>
                 <Pagination
                     page={page}
                     onChange={handlePageChange}
-                    count={Math.ceil(feed.totalCount / 10)}
+                    count={Math.ceil(totalCount / 10)}
                     color='primary'
                 />
             </StackDiv>
