@@ -1,5 +1,6 @@
+import Feed from "components/Feed/Feed";
 import React from "react";
 
 export const AdminPage = () => {
-    return <div>AdminPage</div>;
+    return <Feed />;
 };

@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { ArticleSchema } from "../types";
 import { getAllArticles } from "./getAllArticle";
+import { deleteArticle } from "./deleteArticle";
 
 const initialState: ArticleSchema = {
     feed: { data: [], totalCount: 0 },
@@ -13,18 +14,16 @@ export const articleSlice = createSlice({
     name: "article",
     initialState,
     reducers: {
-        filteringArticle: (state, action: PayloadAction<string>) => {
-            state.feed.data = state.feed.data.filter((article) =>
-                article.title
-                    .toLowerCase()
-                    .includes(action.payload.toLowerCase())
-            );
-        },
         setSearchText: (state, action: PayloadAction<string>) => {
             state.search = action.payload;
         },
+        deleteArticle: (state, action: PayloadAction<number>) => {
+            const index = action.payload;
+            state.feed.data.splice(index, 1);
+        },
     },
     extraReducers: (builder) => {
+        // getAllArticles
         builder.addCase(getAllArticles.pending, (state) => {
             state.error = undefined;
             state.isLoading = true;
@@ -33,6 +32,17 @@ export const articleSlice = createSlice({
             state.feed = action.payload;
         });
         builder.addCase(getAllArticles.rejected, (state, action) => {
+            state.error = action.payload;
+        });
+        // deleteArticle
+        builder.addCase(deleteArticle.pending, (state) => {
+            state.error = undefined;
+            state.isLoading = true;
+        });
+        builder.addCase(deleteArticle.fulfilled, (state) => {
+            state.isLoading = false;
+        });
+        builder.addCase(deleteArticle.rejected, (state, action) => {
             state.error = action.payload;
         });
     },

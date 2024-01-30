@@ -8,12 +8,14 @@ export enum AppRoutes {
     ADMIN_PANEL = "admin",
     NOT_FOUND = "notFound",
     AUTH = "auth",
+    EDIT_ARTICLE = "edit",
 }
 
 export const RoutePath: Record<AppRoutes, string> = {
     [AppRoutes.MAIN]: "/",
     [AppRoutes.ADMIN_PANEL]: "/admin",
     [AppRoutes.AUTH]: "/login",
+    [AppRoutes.EDIT_ARTICLE]: "/edit",
     [AppRoutes.NOT_FOUND]: "*",
 };
 
@@ -67,6 +69,15 @@ const routeConfig: Record<AppRoutes, RouteSchema> = {
                 throw redirect(RoutePath.main);
             }
             return null;
+        },
+    },
+    [AppRoutes.EDIT_ARTICLE]: {
+        path: RoutePath.edit,
+        async lazy() {
+            const { EditArticlePage } = await import(
+                "../pages/EditArticlePage"
+            );
+            return { Component: EditArticlePage };
         },
     },
 };

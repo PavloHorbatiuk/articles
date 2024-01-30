@@ -1,11 +1,8 @@
 export interface Article {
+    id: number;
     title: string;
     description: string;
     link: string;
-    guid: {
-        _: string;
-        isPermaLink: string;
-    };
     pubDate: string;
 }
 

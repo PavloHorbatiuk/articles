@@ -39,7 +39,7 @@ const Feed = () => {
     return (
         <div>
             {filteringData.map((article: Article, index) => (
-                <ArticleItem key={index} data={article} />
+                <ArticleItem key={index} data={article} index={index} />
             ))}
             <StackDiv spacing={2}>
                 <Pagination

@@ -24,4 +24,5 @@ export enum URL {
     LOGIN = "auth/login",
     REGISTRATION = "auth/register",
     GET_ALL_ARTICLES = "articles",
+    DELETE_ARTICLE = "articles/delete",
 }
