@@ -14,7 +14,7 @@ import { SearchPanel } from "./SearchPanel";
 import { articleActions } from "store/slices/articles/articleSlice";
 
 export default function Header() {
-    const { isLoggedIn } = useAuthStatus();
+    const { isLoggedIn, authData } = useAuthStatus();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const timeRef = useRef<ReturnType<typeof setTimeout>>();
@@ -46,6 +46,11 @@ export default function Header() {
                         <Link to={RoutePath.main}>News</Link>
                     </Typography>
                     <SearchPanel handleSearch={searchArticle} />
+                    {authData?.role == "ADMIN" && (
+                        <NavLink to={RoutePath.admin}>
+                            <Button color='secondary'>Admin panel</Button>
+                        </NavLink>
+                    )}
                     {!isLoggedIn ? (
                         <NavLink to={RoutePath.auth}>
                             <Button color='secondary'>Login</Button>

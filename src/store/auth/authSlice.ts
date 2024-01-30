@@ -5,7 +5,7 @@ import { USER_LOCAL_STORAGE_KEY } from "common/const/localStorage";
 import { loginUpByEmail } from "./loginUpByEmail";
 
 const initialState: AuthSchema = {
-    authData: { name: "", email: "", token: "" },
+    authData: { name: "", email: "", token: "", role: "" },
     isLoading: false,
     error: undefined,
 };
@@ -38,8 +38,7 @@ export const authSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(signUpByEmail.fulfilled, (state) => {
-                state.isLoading = true;
-                state.error = "pls, do login";
+                state.isLoading = false;
             })
             .addCase(signUpByEmail.rejected, (state, action) => {
                 state.isLoading = false;
@@ -50,7 +49,7 @@ export const authSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(loginUpByEmail.fulfilled, (state) => {
-                state.isLoading = true;
+                state.isLoading = false;
                 state.error = undefined;
             })
             .addCase(loginUpByEmail.rejected, (state, action) => {

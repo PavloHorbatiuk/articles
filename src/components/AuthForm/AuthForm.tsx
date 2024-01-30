@@ -68,8 +68,6 @@ const AuthForm = ({ onSuccess }: LoginFormProps) => {
                   })
         );
         if (result.meta.requestStatus === "fulfilled") {
-            dispatch(authActions.setError("Successful"));
-
             navigate(RoutePath.main);
             onSuccess && onSuccess();
             setAlert({
@@ -77,7 +75,6 @@ const AuthForm = ({ onSuccess }: LoginFormProps) => {
                 message: checked ? "Created success" : "Login success",
                 severity: "success",
             });
-            dispatch(authActions.setError(""));
         }
     };
 
