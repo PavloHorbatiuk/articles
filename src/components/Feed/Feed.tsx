@@ -16,7 +16,6 @@ const Feed = () => {
     const token = useSelector(getToken);
     const search = useSelector(getSearchText);
     const [page, setPage] = useState(1);
-    const [filter, setFilter] = useState<Article[]>([]);
 
     const handlePageChange = (event: ChangeEvent<unknown>, newPage: number) => {
         setPage(newPage);
@@ -37,17 +36,11 @@ const Feed = () => {
         return filtering;
     }, [data, search]);
 
-    useEffect(() => {
-        setFilter(filteringData);
-    }, [data, filteringData, search]);
-
     return (
         <div>
-            {(filter.length > 0 ? filter : data).map(
-                (article: Article, index) => (
-                    <ArticleItem key={index} data={article} />
-                )
-            )}
+            {filteringData.map((article: Article, index) => (
+                <ArticleItem key={index} data={article} />
+            ))}
             <StackDiv spacing={2}>
                 <Pagination
                     page={page}
