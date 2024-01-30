@@ -9,17 +9,30 @@ import { RoutePath } from "routes/routerConfig";
 import useAuthStatus from "common/hooks/useAuthStatus";
 import { useDispatch } from "react-redux";
 import { authActions } from "store/auth/authSlice";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
+import { SearchPanel } from "./SearchPanel";
+import { articleActions } from "store/slices/articles/articleSlice";
 
 export default function Header() {
     const { isLoggedIn } = useAuthStatus();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const timeRef = useRef<ReturnType<typeof setTimeout>>();
 
     const onLogout = useCallback(() => {
         dispatch(authActions.logout());
         navigate(RoutePath.auth);
     }, [dispatch, navigate]);
+
+    const searchArticle = useCallback(
+        (text: string) => {
+            clearTimeout(timeRef.current);
+            timeRef.current = setTimeout(() => {
+                dispatch(articleActions.setSearchText(text));
+            }, 500);
+        },
+        [dispatch]
+    );
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -32,6 +45,7 @@ export default function Header() {
                     >
                         <Link to={RoutePath.main}>News</Link>
                     </Typography>
+                    <SearchPanel handleSearch={searchArticle} />
                     {!isLoggedIn ? (
                         <NavLink to={RoutePath.auth}>
                             <Button color='secondary'>Login</Button>

@@ -15,6 +15,7 @@ import { getAuthErrors } from "store/auth/selectors/getAuthErrors";
 import { SEVERITY } from "common/const/enums";
 import { useNavigate } from "react-router-dom";
 import { RoutePath } from "routes/routerConfig";
+import { getIsLoading } from "store/auth/selectors/getIsloading";
 
 export interface FormType {
     email: string;
@@ -50,7 +51,7 @@ const AuthForm = ({ onSuccess }: LoginFormProps) => {
     const dispatch = useDispatch<AppThunkDispatch>();
     const checked = watch("isConfirm");
     const navigate = useNavigate();
-    console.log(requestsErrors, "request error");
+    const isLoading = useSelector(getIsLoading);
     const { setAlert } = useContext(UIContext);
 
     const postLogin = async (values: FormType) => {
@@ -146,7 +147,7 @@ const AuthForm = ({ onSuccess }: LoginFormProps) => {
                 {isLogin}
             </Button>
             <div>
-                <Button color='inherit' onClick={onSignUP}>
+                <Button disabled={isLoading} color='inherit' onClick={onSignUP}>
                     {isSignUp}
                 </Button>
             </div>

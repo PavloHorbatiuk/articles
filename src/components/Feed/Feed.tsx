@@ -1,5 +1,5 @@
 import { Pagination, Stack } from "@mui/material";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllArticles } from "store/slices/articles/getAllArticle";
 import { getArticles } from "store/slices/articles/selectors/getArticles";
@@ -7,33 +7,47 @@ import { AppThunkDispatch } from "store/store";
 import ArticleItem from "./ArticleItem";
 import { Article } from "store/slices/types";
 import styled from "@emotion/styled";
+import { getToken } from "store/auth/selectors/getToken";
+import { getSearchText } from "store/slices/articles/selectors/getSearchText";
 
 const Feed = () => {
     const dispatch = useDispatch<AppThunkDispatch>();
     const { data, totalCount } = useSelector(getArticles);
+    const token = useSelector(getToken);
+    const search = useSelector(getSearchText);
     const [page, setPage] = useState(1);
+    const [filter, setFilter] = useState<Article[]>([]);
 
     const handlePageChange = (event: ChangeEvent<unknown>, newPage: number) => {
         setPage(newPage);
     };
 
-    // const sortedFeed = [...data].sort(
-    //     (a, b) => new Date(b.pubDate).valueOf() - new Date(a.pubDate).valueOf()
-    // );
-    // console.log(data, "data");
     useEffect(() => {
         const fetchArticles = async () => {
-            const params = { page: page, limit: 10 };
+            const params = { page: page, limit: 10, token: token };
             await dispatch(getAllArticles(params));
         };
         fetchArticles();
-    }, [dispatch, page]);
+    }, [dispatch, page, token]);
+
+    const filteringData = useMemo(() => {
+        const filtering = data.filter((article) =>
+            article.title.toLowerCase().includes(search)
+        );
+        return filtering;
+    }, [data, search]);
+
+    useEffect(() => {
+        setFilter(filteringData);
+    }, [data, filteringData, search]);
 
     return (
         <div>
-            {data.map((article: Article, index) => (
-                <ArticleItem key={index} data={article} />
-            ))}
+            {(filter.length > 0 ? filter : data).map(
+                (article: Article, index) => (
+                    <ArticleItem key={index} data={article} />
+                )
+            )}
             <StackDiv spacing={2}>
                 <Pagination
                     page={page}

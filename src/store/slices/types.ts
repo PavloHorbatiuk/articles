@@ -15,6 +15,7 @@ export interface FeedData {
 }
 export interface ArticleSchema {
     feed: FeedData;
+    search: string;
     error: string | undefined;
     isLoading: boolean;
 }

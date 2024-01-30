@@ -35,8 +35,9 @@ export const loginUpByEmail = createAsyncThunk<
         dispatch(authActions.setAuthData(response.data));
 
         return response.data;
-    } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
         console.error(error);
-        return rejectWithValue("Wrong login or password");
+        return rejectWithValue(error.response.data.message);
     }
 });

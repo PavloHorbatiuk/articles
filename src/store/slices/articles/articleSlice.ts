@@ -1,10 +1,11 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { ArticleSchema } from "../types";
 import { getAllArticles } from "./getAllArticle";
 
 const initialState: ArticleSchema = {
     feed: { data: [], totalCount: 0 },
     error: "",
+    search: "",
     isLoading: false,
 };
 
@@ -12,9 +13,16 @@ export const articleSlice = createSlice({
     name: "article",
     initialState,
     reducers: {
-        // setArticleData: (state, action: PayloadAction<FeedData>) => {
-        //     state.feed = action.payload;
-        // },
+        filteringArticle: (state, action: PayloadAction<string>) => {
+            state.feed.data = state.feed.data.filter((article) =>
+                article.title
+                    .toLowerCase()
+                    .includes(action.payload.toLowerCase())
+            );
+        },
+        setSearchText: (state, action: PayloadAction<string>) => {
+            state.search = action.payload;
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(getAllArticles.pending, (state) => {

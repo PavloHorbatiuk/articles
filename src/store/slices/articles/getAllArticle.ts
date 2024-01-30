@@ -6,6 +6,7 @@ import { FeedData } from "../types";
 interface ArticlesProps {
     page: number;
     limit: number;
+    token: string | undefined;
 }
 
 export const getAllArticles = createAsyncThunk<
@@ -17,6 +18,7 @@ export const getAllArticles = createAsyncThunk<
 
     try {
         const response = await extra.api.get<FeedData>(URL.GET_ALL_ARTICLES, {
+            headers: { Authorization: `Bearer ${params.token}` },
             params,
         });
 

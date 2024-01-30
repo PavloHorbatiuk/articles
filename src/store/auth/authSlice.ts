@@ -2,6 +2,7 @@ import { type PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { AuthSchema, User } from "./types";
 import { signUpByEmail } from "./signUpByEmail";
 import { USER_LOCAL_STORAGE_KEY } from "common/const/localStorage";
+import { loginUpByEmail } from "./loginUpByEmail";
 
 const initialState: AuthSchema = {
     authData: { name: "", email: "", token: "" },
@@ -41,6 +42,18 @@ export const authSlice = createSlice({
                 state.error = "pls, do login";
             })
             .addCase(signUpByEmail.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload;
+            })
+            .addCase(loginUpByEmail.pending, (state) => {
+                state.error = undefined;
+                state.isLoading = true;
+            })
+            .addCase(loginUpByEmail.fulfilled, (state) => {
+                state.isLoading = true;
+                state.error = undefined;
+            })
+            .addCase(loginUpByEmail.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload;
             });
