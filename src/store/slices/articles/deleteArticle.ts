@@ -7,7 +7,6 @@ import { articleActions } from "./articleSlice";
 interface ArticlesProps {
     id: number;
     index: number;
-    token: string | undefined;
 }
 
 export const deleteArticle = createAsyncThunk<
@@ -19,10 +18,7 @@ export const deleteArticle = createAsyncThunk<
 
     try {
         const response = await extra.api.delete<Article>(
-            `${URL.DELETE_ARTICLE}/${params.id}`,
-            {
-                headers: { Authorization: `Bearer ${params.token}` },
-            }
+            `${URL.DELETE_ARTICLE}/${params.id}`
         );
         dispatch(articleActions.deleteArticle(params.index));
         return response.data;

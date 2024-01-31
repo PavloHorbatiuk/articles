@@ -1,10 +1,9 @@
 import React, { useContext } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { AppThunkDispatch } from "store/store";
 import { deleteArticle } from "store/slices/articles/deleteArticle";
-import { getToken } from "store/auth/selectors/getToken";
 import { UIContext } from "common/UIContext";
 import { Article } from "store/slices/types";
 import { RoutePath } from "routes/routerConfig";
@@ -18,14 +17,12 @@ interface IProps {
 export const ArticleOptions = ({ data, index }: IProps) => {
     const disPatch = useDispatch<AppThunkDispatch>();
     const { setAlert } = useContext(UIContext);
-    const token = useSelector(getToken);
     const navigate = useNavigate();
-
+    console.log(index, "index");
     const onDelete = async (id: number, index: number) => {
         const params = {
             id: data.id,
             index: index,
-            token: token,
         };
         const result = await disPatch(deleteArticle(params));
         if (result.meta.requestStatus === "fulfilled") {
@@ -38,7 +35,9 @@ export const ArticleOptions = ({ data, index }: IProps) => {
     };
 
     const editArticle = (data: Article, index: number) => {
-        navigate(RoutePath.edit, { state: { article: data } });
+        navigate(RoutePath.edit, {
+            state: { article: { data: { ...data, index } } },
+        });
         console.log(data, index, "edit");
     };
 

@@ -1,36 +1,37 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { styled, Button, TextField } from "@mui/material";
+import { styled, Button, TextField, Typography } from "@mui/material";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import WarnInfo from "common/UIWidgets/WarnInfo/WarnInfo";
 import { SEVERITY } from "common/const/enums";
 import { ArticleFormType, validationSchema } from "./articleValidation";
 import { getError } from "store/slices/articles/selectors/getError";
-import { useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import ReactDatePicker from "react-datepicker";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 import "react-datepicker/dist/react-datepicker.css";
-// import {
-//     KeyboardDatePicker,
-//     MuiPickersUtilsProvider,
-// } from "@material-ui/pickers";
-// import DateFnsUtils from "@date-io/date-fns";
+import { RoutePath } from "routes/routerConfig";
+import { updateArticle } from "store/slices/articles/updateArticle";
+import { getIsLoading } from "store/auth/selectors/getIsloading";
+import { UIContext } from "common/UIContext";
+import { AppThunkDispatch } from "store/store";
 
-export interface FormType {
+export interface ArticleForm {
     title?: string;
     description?: string;
     link?: string;
-    confirmPassword?: string;
-    pubDate: string;
+    pubDate?: Date | string;
 }
 
 export interface IProps {}
 
 export const ArticleForm = () => {
     const { state } = useLocation();
-    const { title, description, link, pubDate } = state.article;
+    const { title, description, link, pubDate, id, index } = state.article.data;
+    console.log(state, "state");
     const {
         register,
         handleSubmit,
@@ -46,28 +47,31 @@ export const ArticleForm = () => {
         },
     });
     const requestsErrors = useSelector(getError);
-    console.log(state, "state");
-    // const dispatch = useDispatch<AppThunkDispatch>();
-    // const isLoading = useSelector();
-    // const { setAlert } = useContext(UIContext);
+    const dispatch = useDispatch<AppThunkDispatch>();
+    const isLoading = useSelector(getIsLoading);
+    const { setAlert } = useContext(UIContext);
 
-    // const postLogin = async (values: FormType) => {
-    //     const result = await dispatch();
-    //     if (result.meta.requestStatus === "fulfilled") {
-    //         navigate(RoutePath.main);
-    //         onSuccess && onSuccess();
-    //         setAlert({
-    //             show: true,
-    //             message: checked ? "Created success" : "Login success",
-    //             severity: "success",
-    //         });
-    //     }
-    // };
+    const postArticle = async (values: ArticleForm) => {
+        const params = { ...values, id, index };
+        const result = await dispatch(updateArticle(params));
+        if (result.meta.requestStatus === "fulfilled") {
+            setAlert({
+                show: true,
+                message: "Success",
+                severity: "success",
+            });
+        }
+    };
 
-    const onSubmit = handleSubmit((data) => console.log(data, "data"));
+    const onSubmit = handleSubmit((data) => postArticle(data));
 
     return (
         <Form onSubmit={onSubmit}>
+            <ArrowWrapper>
+                <NavLink to={RoutePath.admin}>
+                    <ArrowBackIosIcon />
+                </NavLink>
+            </ArrowWrapper>
             <TextField
                 label='Title'
                 fullWidth
@@ -92,17 +96,7 @@ export const ArticleForm = () => {
                 }}
                 {...register("description")}
             />
-            {/* <Controller
-                control={control}
-                name='pubDate'
-                render={({ field }) => (
-                    <DatePicker
-                        onChange={(date: Date) => field.onChange(date)}
-                        selected={field.value}
-                    />
-                )}
-            /> */}
-
+            <Typography variant='h5'> Date of publish:</Typography>
             <Controller
                 control={control}
                 name='pubDate'
@@ -115,30 +109,17 @@ export const ArticleForm = () => {
                 )}
             />
 
-            {/* <MuiPickersUtilsProvider utils={DateFnsUtils}> */}
-            {/* <Controller
-                name='pubDate'
-                control={control}
-                render={({ field: { ...rest } }) => (
-                    <KeyboardDatePicker
-                        margin='normal'
-                        id='date-picker-dialog'
-                        label='Date picker dialog'
-                        format='MM/dd/yyyy'
-                        KeyboardButtonProps={{
-                            "aria-label": "change date",
-                        }}
-                        {...rest}
-                    />
-                )}
-            /> */}
-            {/* </MuiPickersUtilsProvider> */}
-
             {requestsErrors && (
                 <WarnInfo severity={SEVERITY.ERROR}>{requestsErrors}</WarnInfo>
             )}
 
-            <Button color='primary' variant='contained' fullWidth type='submit'>
+            <Button
+                disabled={isLoading}
+                color='primary'
+                variant='contained'
+                fullWidth
+                type='submit'
+            >
                 Create article
             </Button>
         </Form>
@@ -146,8 +127,25 @@ export const ArticleForm = () => {
 };
 
 export const Form = styled("form")({
-    "& .MuiTextField-root, .MuiButton-root, .MuiPaper-elevation, .MuiInput-underline":
+    "& .MuiTextField-root, .MuiButton-root, .MuiPaper-elevation, .MuiInput-underline, .react-datepicker-wrapper":
         {
             marginBottom: 10,
         },
+});
+export const DatePicker = styled(ReactDatePicker)({
+    "& input": {
+        with: "100%",
+        textAlign: "center",
+        border: "none",
+        backgroundColor: "transparent",
+        borderBottom: " 2px solid #E3B924",
+    },
+
+    " &:focus ": {
+        outline: "none",
+    },
+    "& .react-datepicker-wrapper": {},
+});
+export const ArrowWrapper = styled("div")({
+    padding: "10px 0 20px 0",
 });

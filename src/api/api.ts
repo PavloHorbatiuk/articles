@@ -25,4 +25,5 @@ export enum URL {
     REGISTRATION = "auth/register",
     GET_ALL_ARTICLES = "articles",
     DELETE_ARTICLE = "articles/delete",
+    UPDATE_ARTICLE = "articles/update",
 }
