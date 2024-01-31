@@ -18,7 +18,7 @@ export const ArticleOptions = ({ data, index }: IProps) => {
     const disPatch = useDispatch<AppThunkDispatch>();
     const { setAlert } = useContext(UIContext);
     const navigate = useNavigate();
-    console.log(index, "index");
+
     const onDelete = async (id: number, index: number) => {
         const params = {
             id: data.id,

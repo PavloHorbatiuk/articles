@@ -1,8 +1,9 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { ArticleSchema } from "../types";
+import { Article, ArticleSchema } from "../types";
 import { getAllArticles } from "./getAllArticle";
 import { deleteArticle } from "./deleteArticle";
 import { updateArticle } from "./updateArticle";
+import { createArticle } from "./createArticle";
 
 const initialState: ArticleSchema = {
     feed: { data: [], totalCount: 0 },
@@ -26,6 +27,9 @@ export const articleSlice = createSlice({
             const index = action.payload;
             console.log(index, "index");
             // state.feed.data[index] =
+        },
+        setArticles: (state, action: PayloadAction<Article[]>) => {
+            state.feed.data = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -60,6 +64,18 @@ export const articleSlice = createSlice({
             state.isLoading = false;
         });
         builder.addCase(updateArticle.rejected, (state, action) => {
+            state.error = action.payload;
+        });
+        // createArticle
+        builder.addCase(createArticle.pending, (state) => {
+            state.error = undefined;
+            state.isLoading = true;
+        });
+        builder.addCase(createArticle.fulfilled, (state, action) => {
+            state.isLoading = false;
+            state.feed.data.unshift(action.payload);
+        });
+        builder.addCase(createArticle.rejected, (state, action) => {
             state.error = action.payload;
         });
     },

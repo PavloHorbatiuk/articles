@@ -1,5 +1,11 @@
 import { Pagination, Stack } from "@mui/material";
-import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
+import React, {
+    ChangeEvent,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllArticles } from "store/slices/articles/getAllArticle";
 import { getArticles } from "store/slices/articles/selectors/getArticles";
@@ -9,6 +15,8 @@ import { Article } from "store/slices/types";
 import styled from "@emotion/styled";
 import { getToken } from "store/auth/selectors/getToken";
 import { getSearchText } from "store/slices/articles/selectors/getSearchText";
+import { SortPanel } from "./SortPanel";
+import { articleActions } from "store/slices/articles/articleSlice";
 
 const Feed = () => {
     const dispatch = useDispatch<AppThunkDispatch>();
@@ -36,8 +44,27 @@ const Feed = () => {
         return filtering;
     }, [data, search]);
 
+    const sort = useCallback(
+        (value: string) => {
+            const sortBy: Record<string, (a: Article, b: Article) => number> = {
+                Title: (a, b) => a.title.localeCompare(b.title),
+
+                Newest: (a, b) =>
+                    new Date(a.pubDate).valueOf() -
+                    new Date(b.pubDate).valueOf(),
+            };
+
+            if (value in sortBy) {
+                const sortedArticles = [...data].sort(sortBy[value]);
+                dispatch(articleActions.setArticles(sortedArticles));
+            }
+        },
+        [data, dispatch]
+    );
+
     return (
         <div>
+            <SortPanel sort={sort} />
             {filteringData.map((article: Article, index) => (
                 <ArticleItem key={index} data={article} index={index} />
             ))}

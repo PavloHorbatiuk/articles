@@ -8,7 +8,7 @@ import WarnInfo from "common/UIWidgets/WarnInfo/WarnInfo";
 import { SEVERITY } from "common/const/enums";
 import { ArticleFormType, validationSchema } from "./articleValidation";
 import { getError } from "store/slices/articles/selectors/getError";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import ReactDatePicker from "react-datepicker";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
@@ -18,6 +18,7 @@ import { updateArticle } from "store/slices/articles/updateArticle";
 import { getIsLoading } from "store/auth/selectors/getIsloading";
 import { UIContext } from "common/UIContext";
 import { AppThunkDispatch } from "store/store";
+import { createArticle } from "store/slices/articles/createArticle";
 
 export interface ArticleForm {
     title?: string;
@@ -29,9 +30,11 @@ export interface ArticleForm {
 export interface IProps {}
 
 export const ArticleForm = () => {
-    const { state } = useLocation();
-    const { title, description, link, pubDate, id, index } = state.article.data;
-    console.log(state, "state");
+    const { state, pathname } = useLocation();
+    const articleData = state?.article?.data || {};
+    const { title, description, link, pubDate, id, index } = articleData;
+    const navigate = useNavigate();
+    const isCreateRoute = pathname === "/create";
     const {
         register,
         handleSubmit,
@@ -40,10 +43,10 @@ export const ArticleForm = () => {
     } = useForm<ArticleFormType>({
         resolver: zodResolver(validationSchema),
         defaultValues: {
-            title,
-            description,
-            link,
-            pubDate: new Date(pubDate),
+            title: title ?? "",
+            description: description ?? "",
+            link: link ?? "",
+            pubDate: pubDate ? new Date(pubDate) : new Date(),
         },
     });
     const requestsErrors = useSelector(getError);
@@ -51,7 +54,19 @@ export const ArticleForm = () => {
     const isLoading = useSelector(getIsLoading);
     const { setAlert } = useContext(UIContext);
 
-    const postArticle = async (values: ArticleForm) => {
+    const createPost = async (values: ArticleForm) => {
+        const result = await dispatch(createArticle(values));
+        if (result.meta.requestStatus === "fulfilled") {
+            navigate(RoutePath.admin);
+            setAlert({
+                show: true,
+                message: "Success",
+                severity: "success",
+            });
+        }
+    };
+
+    const updateFetch = async (values: ArticleForm) => {
         const params = { ...values, id, index };
         const result = await dispatch(updateArticle(params));
         if (result.meta.requestStatus === "fulfilled") {
@@ -63,7 +78,9 @@ export const ArticleForm = () => {
         }
     };
 
-    const onSubmit = handleSubmit((data) => postArticle(data));
+    const onSubmit = handleSubmit((data) =>
+        isCreateRoute ? createPost(data) : updateFetch(data)
+    );
 
     return (
         <Form onSubmit={onSubmit}>
@@ -95,6 +112,14 @@ export const ArticleForm = () => {
                     inputComponent: "textarea",
                 }}
                 {...register("description")}
+            />
+            <TextField
+                label='Link'
+                fullWidth
+                error={Boolean(errors.link)}
+                helperText={errors?.link?.message}
+                minRows={5}
+                {...register("link")}
             />
             <Typography variant='h5'> Date of publish:</Typography>
             <Controller

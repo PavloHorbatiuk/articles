@@ -26,4 +26,5 @@ export enum URL {
     GET_ALL_ARTICLES = "articles",
     DELETE_ARTICLE = "articles/delete",
     UPDATE_ARTICLE = "articles/update",
+    CREATE_ARTICLE = "articles/create",
 }

@@ -12,6 +12,7 @@ import { authActions } from "store/auth/authSlice";
 import { useCallback, useRef } from "react";
 import { SearchPanel } from "./SearchPanel";
 import { articleActions } from "store/slices/articles/articleSlice";
+import AddIcon from "@mui/icons-material/Add";
 
 export default function Header() {
     const { isLoggedIn, authData } = useAuthStatus();
@@ -47,9 +48,14 @@ export default function Header() {
                     </Typography>
                     <SearchPanel handleSearch={searchArticle} />
                     {authData?.role == "ADMIN" && (
-                        <NavLink to={RoutePath.admin}>
-                            <Button color='secondary'>Admin panel</Button>
-                        </NavLink>
+                        <>
+                            <NavLink to={RoutePath.create}>
+                                <AddIcon sx={{ cursor: "pointer" }} />
+                            </NavLink>
+                            <NavLink to={RoutePath.admin}>
+                                <Button color='secondary'>Admin panel</Button>
+                            </NavLink>
+                        </>
                     )}
                     {!isLoggedIn ? (
                         <NavLink to={RoutePath.auth}>

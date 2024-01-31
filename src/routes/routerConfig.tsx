@@ -9,6 +9,7 @@ export enum AppRoutes {
     NOT_FOUND = "notFound",
     AUTH = "auth",
     EDIT_ARTICLE = "edit",
+    CREATE_ARTICLE = "create",
 }
 
 export const RoutePath: Record<AppRoutes, string> = {
@@ -17,6 +18,7 @@ export const RoutePath: Record<AppRoutes, string> = {
     [AppRoutes.AUTH]: "/login",
     [AppRoutes.EDIT_ARTICLE]: "/edit",
     [AppRoutes.NOT_FOUND]: "*",
+    [AppRoutes.CREATE_ARTICLE]: "/create",
 };
 
 export interface RouteSchema {
@@ -78,6 +80,15 @@ const routeConfig: Record<AppRoutes, RouteSchema> = {
                 "../pages/EditArticlePage"
             );
             return { Component: EditArticlePage };
+        },
+    },
+    [AppRoutes.CREATE_ARTICLE]: {
+        path: RoutePath.create,
+        async lazy() {
+            const { CreateArticle } = await import(
+                "../pages/CreateArticlePage"
+            );
+            return { Component: CreateArticle };
         },
     },
 };
