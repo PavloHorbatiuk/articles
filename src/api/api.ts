@@ -13,7 +13,7 @@ const authData: User | null = authDataString
 const token = authData ? authData.token : null;
 
 export const $api = axios.create({
-    baseURL: "http://localhost:3001",
+    baseURL: "https://article-server.onrender.com",
     headers: {
         Authorization: `Bearer ${token}`,
     },
